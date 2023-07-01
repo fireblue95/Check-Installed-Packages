@@ -6,14 +6,21 @@ class CheckPackages:
     def __init__(self):
         self.config_yml = 'config.yml'
         self.__get_opt__()
+        self.__export__()
 
     def __get_opt__(self) -> None:
         parser = ArgumentParser()
 
         parser.add_argument('--no-check-dpkg', action="store_true")
         parser.add_argument('--no-check-pypi', action="store_true")
+        parser.add_argument('--out', action="store_true")
+        parser.add_argument('--out-txt', default='check_result.txt', type=str)
 
         self.opt = parser.parse_args()
+
+    def __export__(self) -> None:
+        if self.opt.out:
+            self.out_writer = open(self.opt.out_txt, 'w')
 
     def __read_yaml__(self) -> None:
         with open(self.config_yml, 'r') as f:
@@ -24,6 +31,13 @@ class CheckPackages:
 
         self.max_len_dpkg = len(max(self.cfg['dpkg'], key=len))
         self.max_len_pip = len(max(self.cfg['pypi'], key=len))
+
+    def __print_info__(self, msg: str) -> None:
+        print(msg)
+
+        if self.opt.out:
+            self.out_writer.write(msg.replace('\033[0m', '').replace('\033[31m', '').replace('\033[32m', '') + "\r\n")
+
 
     def __search_dpkg__(self, pkg: str) -> None:
         command = f"dpkg -l  | grep -v 'local repository' | grep -i {pkg} | wc -l"
@@ -51,8 +65,7 @@ class CheckPackages:
         return False
 
     def __check_dpkg__(self) -> None:
-        
-        print(f'{" Checking Dpkg ":=^50}')
+        self.__print_info__(f'{" Checking Dpkg ":=^50}')
 
         for item in self.cfg['dpkg']:
             is_installed = self.__search_dpkg__(item)
@@ -60,12 +73,12 @@ class CheckPackages:
             msg = f"{item:>{self.max_len_dpkg}} : "
             msg += f'\033[32m{"Installed":>13}\033[0m' if is_installed else '\033[31mNot Installed\033[0m'
 
-            print(msg)
+            self.__print_info__(msg)
 
-        print()
+        self.__print_info__('')
 
     def __check_pypi__(self) -> None:
-        print(f'{" Checking PyPI ":=^50}')
+        self.__print_info__(f'{" Checking PyPI ":=^50}')
 
         command = 'pip3 freeze'
         pip_list = list(filter(lambda x:x, subprocess.run(command, shell=True, capture_output=True, text=True).stdout.split('\n')))
@@ -76,7 +89,7 @@ class CheckPackages:
             msg = f"{item:>{self.max_len_pip}} : "
             msg += f'\033[32m{"Installed":>13} --> {pip_pkgs[item.lower()]}\033[0m' if item.lower() in pip_pkgs else '\033[31mNot Installed\033[0m'
 
-            print(msg)
+            self.__print_info__(msg)
 
     def run(self) -> None:
         self.__read_yaml__()
@@ -89,6 +102,12 @@ class CheckPackages:
 
         if not self.opt.no_check_pypi:
            self.__check_pypi__()
+        
+        self.__print_info__('')
+        self.__print_info__('=' * 50)
+        if self.opt.out:
+            self.out_writer.close()
+            print(f"Export to : {self.opt.out_txt}")
 
 
 if __name__ == "__main__":

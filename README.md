@@ -40,7 +40,6 @@ pypi:
  - opencv-python
 ```
 
-
 Check `Dpkg` and `PyPI`
 ---
 ```bash
@@ -57,6 +56,19 @@ Check `PyPI` only
 ---
 ```bash
 python3 check_packages.py --no-check-dpkg
+```
+
+Export to `txt`
+---
+
+By default, if you use the `--out` option, it will export the results to `check_result.txt`.
+```bash
+python3 check_packages.py --out
+```
+
+To specify the checking result as `output.txt`, you can use the `--out-txt` option as follows:
+```bash
+python3 check_packages.py --out --out-txt output.txt
 ```
 
 Note
