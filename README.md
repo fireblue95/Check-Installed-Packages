@@ -5,8 +5,8 @@ This repository supports checking whether the packages are installed.
 
 Supports checking the types of packages
 ===
-* ## Dpkg
-* ## PyPI
+* ### Dpkg
+* ### PyPI
 
 Installation
 ===
