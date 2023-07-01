@@ -25,7 +25,7 @@ Usage
 Modify the checklist
 ---
 
-Add the names of the `DPKG` packages you want to check under the `dpkg:` section in the `config.yml` file.
+Add the names of the `Dpkg` packages you want to check under the `dpkg:` section in the `config.yml` file.
 ```yaml
 dpkg:
  - qt5
