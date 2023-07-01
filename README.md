@@ -45,14 +45,14 @@ Note
 Please check if the name of the PyPI package in `config.yml` is correct.  
 You can verify it by using the `pip3 freeze` command to get the correct name.
 
-## <span style="color:green">Correct</span>
+## Correct
 ```bash
 opencv-python
 PyYAML
 pyyaml
 ```
 
-## <span style="color:red">Incorrect</span>
+## Incorrect
 ```bash
 opencvpython
 ```
